@@ -1,11 +1,10 @@
 import React, { useEffect} from 'react';
 import * as THREE from 'three';
 
-export const Scale = ({mesh}) => {
+export const Scale = ({obj}) => {
 
     useEffect(() => {
 
-        
         const xslider = document.getElementById("xs-slider"); 
         const inputXS = document.getElementById("xs"); 
 
@@ -15,27 +14,26 @@ export const Scale = ({mesh}) => {
         const zslider = document.getElementById("zs-slider"); 
         const inputZS = document.getElementById("zs"); 
 
-        xslider.value = mesh.scale.x;
-        inputXS.value = mesh.scale.x;
+        xslider.value = obj.mesh.scale.x;
+        inputXS.value = obj.mesh.scale.x;
         
-        yslider.value = mesh.scale.y;
-        inputYS.value = mesh.scale.y;
+        yslider.value = obj.mesh.scale.y;
+        inputYS.value = obj.mesh.scale.y;
 
-        zslider.value = mesh.scale.z;
-        inputZS.value = mesh.scale.z;
-
+        zslider.value = obj.mesh.scale.z;
+        inputZS.value = obj.mesh.scale.z;
 
     }, [])
 
     return (
-        <div className='w-[190px] h-[150px] bg-red-100 items-center'>
+        <div className='bg-red-100 items-center'>
             <div className='pt-3 pb-2 font-bold'>
                 <h3>Scale</h3>
             </div>
             <div className='flex flex-col'>
                 <div className='flex flex-row mt-2 mb-2'>
                     <input type="range" id="xs-slider" min="1" max="100" 
-                        className='w-30 bg-gray-100 h-5 outline-1 ml-2'
+                        className='bg-gray-100 h-5 outline-1 ml-2'
                         onInput={(e) => {
 
                             const slider = document.getElementById("xs-slider");
@@ -43,9 +41,9 @@ export const Scale = ({mesh}) => {
 
                             input.value = slider.value;
                             const s = parseInt(input.value, 10);
-                            mesh.scale.x = s;
+                            obj.mesh.scale.x = s;
 
-                            console.log(mesh.position.x, mesh.position.z);
+                            console.log(obj.mesh.position.x, obj.mesh.position.z);
 
                         }}
                     />
@@ -56,25 +54,25 @@ export const Scale = ({mesh}) => {
 
                             slider.value = inputR.value;
                             const s = parseInt(inputR.value, 10);
-                            mesh.scale.x = s;
+                            obj.mesh.scale.x = s;
 
-                            console.log(mesh.position.x, mesh.position.z);
+                            console.log(obj.mesh.position.x, obj.mesh.position.z);
 
                         }}
                     />
                 </div>
                 <div className='flex flex-row mb-2'>
                     <input type="range" id="ys-slider" min="1" max="100" 
-                        className='w-30 bg-gray-100 h-5 outline-1 ml-2'
+                        className='bg-gray-100 h-5 outline-1 ml-2'
                         onInput={(e) => {
                             const slider = document.getElementById("ys-slider");
                             const input = document.getElementById("ys");
 
                             input.value = slider.value;
                             const s = parseInt(input.value, 10);
-                            mesh.scale.y = s;
+                            obj.mesh.scale.y = s;
 
-                            console.log(mesh.position.x, mesh.position.z);
+                            console.log(obj.mesh.position.x, obj.mesh.position.z);
 
                         }}
                     />
@@ -85,9 +83,9 @@ export const Scale = ({mesh}) => {
 
                             slider.value = input.value;
                             const s = parseInt(input.value, 10);
-                            mesh.scale.y = s;
+                            obj.mesh.scale.y = s;
 
-                            console.log(mesh.position.x, mesh.position.z);
+                            console.log(obj.mesh.position.x, obj.mesh.position.z);
 
                         }}
                     />
@@ -95,14 +93,14 @@ export const Scale = ({mesh}) => {
 
                 <div className='flex flex-row mb-2'>
                     <input type="range" id="zs-slider" min="1" max="100" 
-                        className='w-30 bg-gray-100 h-5 outline-1 ml-2'
+                        className='bg-gray-100 h-5 outline-1 ml-2'
                         onInput={(e) => {
                             const slider = document.getElementById("zs-slider");
                             const input = document.getElementById("zs");
 
                             input.value = slider.value;
                             const s = parseInt(input.value, 10);
-                            mesh.scale.z = s;
+                            obj.mesh.scale.z = s;
 
                         }}
                     />
@@ -113,7 +111,7 @@ export const Scale = ({mesh}) => {
 
                             slider.value = inputR.value;
                             const s = parseInt(inputR.value, 10);
-                            mesh.scale.z = s;
+                            obj.mesh.scale.z = s;
 
                         }}
                     />

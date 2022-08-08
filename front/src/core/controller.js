@@ -1,12 +1,9 @@
 import * as THREE from "three";
 import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls";
-import React from "react";
-import * as ReactDOM from 'react-dom/client';
-import { Option } from "../pages/Map/Option";
 
 export class Controller {
 
-    constructor(camera, elem, canvas, group, floor) {
+    constructor(camera, elem, canvas, group, floor, cb) {
 
         this.camera             = camera;
         this.floor              = floor;
@@ -23,13 +20,12 @@ export class Controller {
         this.isPressed          = false;
         this.positionOption     = false;
         this.isRightButton      = false;
-        
+        this.cb                 = cb;
 
         this.controls.domElement.addEventListener('click', () => {
             if (!this.editMode) {
                 this.controls.lock();
             }
-            // this.controls.lock();
         })
         this.controls.addEventListener('lock', () => {
             console.log('lock');
@@ -65,6 +61,7 @@ export class Controller {
                 this.calculateMousePosition(e);
                 this.clickPoint.x = e.clientX;
                 this.clickPoint.y = e.clientY;
+
             }
 
             if (this.selectMesh) {
@@ -77,7 +74,7 @@ export class Controller {
             if (this.editMode) {
                 this.isPressed = false;
                 if (!this.isRightButton && this.selectMesh) {
-                    this.endMovePosition(this.selectMesh);
+                    this.endMovePosition(this.selectMesh.mesh);
                 }
             }
 
@@ -87,7 +84,7 @@ export class Controller {
             if (this.editMode) {
                 this.calculateMousePosition(e);
                 if (this.isPressed && !this.isRightButton && this.selectMesh) {
-                    this.movePosition(this.selectMesh);
+                    this.movePosition(this.selectMesh.mesh);
                 }
             }
         });
@@ -136,7 +133,6 @@ export class Controller {
 
         if (Number.isInteger(posX)) {
             // 홀수
-
             for (let i = 0; i < y; i++) {
 
                 this.setColorBlue(posX, posY + i - ((y/2) - 0.5));
@@ -149,7 +145,6 @@ export class Controller {
         }
         else {
             // 짝수
-            // console.log("asdasd");
             for (let i = 0; i < y; i++) {
 
                 for(let j = 0; j < x / 2; j++) {
@@ -199,7 +194,9 @@ export class Controller {
 
     movePosition(mesh) {
         console.log(mesh);
-        this.selectMesh.position.y = 2;
+        this.selectMesh.mesh.position.y = 2;
+
+        // todo: 다시 구현 움직임이 너무 어색함.
 
         this.revertFloorColor(mesh);
 
@@ -259,6 +256,10 @@ export class Controller {
     endMovePosition(mesh) {
         mesh.position.y = 0.5;
         this.revertFloorColor(mesh);
+        if (this.selectMesh.mesh.name.split('#')[0] === "wall") {
+            this.selectMesh.setRotatePos();
+            this.selectMesh.updatePosToRotate();
+        }
     }
 
     zoom() {
@@ -283,35 +284,14 @@ export class Controller {
         
     }
 
-    createOption() {
-        if (!document.getElementById("option")) {
-
-            const root = ReactDOM.createRoot(document.getElementById('Edit'));
-            const left = this.clickPoint.x;
-            const top = this.clickPoint.y;
-
-            root.render(<Option top={top} left={left} mesh={this.selectMesh} option={this.positionOption}/>);
-        }
-    }
-
-    deleteOption() {
-        if (document.getElementById("option")) {
-            const option = document.getElementById("option");
-            option.remove();
-        }   
-    }
-
     checkIntersects(meshes) {
 
-        let meshArray = [];
+        let array = [];
 
         for (const item in meshes) {
-            meshArray.push(meshes[item]);
+            array.push(meshes[item].mesh);
         }
-        console.log(meshArray);
-    
-        const intersects = this.raycaster.intersectObjects(meshArray);
-        console.log(intersects);
+        const intersects = this.raycaster.intersectObjects(array);
 
         if (this.selectMesh) {
             return;
@@ -319,40 +299,21 @@ export class Controller {
 
         if (intersects.length > 0) {
             for (const item of intersects) {
+                let obj = item.object;
+                while(true) {
+                    if (obj.parent.name !== "renderGroup") {
+                        obj = obj.parent;
+                    }
+                    else {
+                        break;
+                    }
+                }
                 
-                if (item.object.name === 'floor') {
-                    console.log("floor");
-                }
-                if (item.object.name !== 'floor') {
-                    let objName = item.object.name;
-                    if (item.object.parent.name !== "renderGroup") {
-                        let temp = item.object;
-                        while(true) {
-                            if (temp.parent.name !== "renderGroup") {
-                                temp = temp.parent;
-                            }
-                            else {
-                                objName = temp.name;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    this.selectMesh = meshes[objName];
-                    if (this.isRightButton) {
-                        this.createOption(this.selectMesh);
-                    }
-                }
+                this.selectMesh = meshes[obj.name.split('#')[1]];
+                this.cb(this.selectMesh);
                 break;
             }
         }
-        else {
-            if (this.selectMesh) {
-                this.deleteOption();
-            }
-        }
-        
-        
     }
 
     rotateCamera(delta) {

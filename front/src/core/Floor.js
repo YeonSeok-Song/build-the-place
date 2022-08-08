@@ -49,9 +49,6 @@ export class Floor {
 
         this.lines[`${x}-${y}`].geometry.dispose();
         this.lines[`${x}-${y}`].material.dispose();
-        
-        // this.scene.remove(this.blocks[`${x}-${y}`]);
-        // this.scene.remove(this.lines[`${x}-${y}`]);
 
         this.group.remove(this.blocks[`${x}-${y}`]);
         this.group.remove(this.lines[`${x}-${y}`]);
