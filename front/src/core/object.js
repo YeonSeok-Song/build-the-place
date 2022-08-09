@@ -4,25 +4,58 @@ import { Wall } from "./wall";
 import { CustomObj } from "./customObj";
 
 export class Objects {
-constructor(group) {
-        this.objectArray = [];
-        this.meshArray = [];
-        this.group = group;
-        this.meshCount = 0;
+constructor(group, camera, canvas, floor) {
+        this.objectArray    = [];
+        this.meshArray      = [];
+        this.group          = group;
+        this.camera         = camera;
+        this.floor          = floor;
+        this.meshCount      = 0;
+        this.canvas         = canvas;
+        this.cameraCenterRay = new THREE.Raycaster();
+    }
+
+    raycastingSet() {
+        this.cameraCenterRay.setFromCamera(
+            new THREE.Vector2(0, 0),
+            this.camera            
+        );
+    }
+
+    centerRayCasting() {
+        this.raycastingSet();
+        const intersects = this.cameraCenterRay.intersectObjects(this.floor.blockGroup.children);
+        let centerBlock = null;
+        if (intersects.length > 0) {
+            for (const item of intersects) {
+                centerBlock = item.object;
+                break;
+            }
+        }
+        
+        if (!centerBlock) {
+            return new THREE.Vector2(0, 0);
+        }
+        const [x, y] = centerBlock.name.split("-");
+        return new THREE.Vector2(x, y);
     }
 
     createCircle() {
     }
 
     createBox() {
+        const pos = this.centerRayCasting();
+        console.log(pos);
         const obj = new Cube();
+        obj.move(pos.x, pos.y);
         this.objectArray[obj.name] = obj;
         this.meshArray[obj.name] = obj.mesh;
         this.group.add(obj.mesh);
     }
 
     createWall() {
-        const obj = new Wall();
+        const pos = this.centerRayCasting();
+        const obj = new Wall(pos.x, pos.y);
         obj.updatePosToRotate();
         this.objectArray[obj.name] = obj;
         this.meshArray[obj.name] = obj.mesh;
@@ -33,10 +66,9 @@ constructor(group) {
         const loadData = loader.getData(name);
 
         if (!loadData) return;
-        console.log(name);
-        console.log(loadData);
         const obj = new CustomObj(name, loadData);
-        console.log(obj);
+        const pos = this.centerRayCasting();
+        obj.move(pos.x, pos.y);
         this.objectArray[obj.name] = obj;
         this.meshArray[obj.name] = obj.mesh;
         this.group.add(obj.mesh);

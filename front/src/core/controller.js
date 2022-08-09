@@ -21,6 +21,7 @@ export class Controller {
         this.positionOption     = false;
         this.isRightButton      = false;
         this.cb                 = cb;
+        this.cameraCenterPos    = null;
 
         this.controls.domElement.addEventListener('click', () => {
             if (!this.editMode) {
@@ -101,29 +102,27 @@ export class Controller {
     }
 
     setColorRed(x, y) {
-        const check = this.group.getObjectByName(`${x}-${y}`);
+        const check = this.floor.blockGroup.getObjectByName(`${x}-${y}`);
         if (check) {
             check.material.color.set('red');
         }
     }
 
     setColorBlue(x, y) {
-        const check = this.group.getObjectByName(`${x}-${y}`)
+        const check = this.floor.blockGroup.getObjectByName(`${x}-${y}`)
         if (check) {
             check.material.color.set("blue");
         }
     }
 
     setColorWhite(x, y) {
-        const check = this.group.getObjectByName(`${x}-${y}`);
+        const check = this.floor.blockGroup.getObjectByName(`${x}-${y}`);
         if (check) {
             check.material.color.set("white");
         }
     }
 
     changeFloorColor(mesh) {
-
-        // console.log(mesh.position.x, mesh.position.y);
 
         const x = mesh.scale.x;
         const y = mesh.scale.z;
@@ -278,10 +277,8 @@ export class Controller {
     }
 
     rayCasting(meshes) {
-        
         this.raycaster.setFromCamera(this.mouse, this.camera);
 	    this.checkIntersects(meshes);
-        
     }
 
     checkIntersects(meshes) {
@@ -322,6 +319,12 @@ export class Controller {
 
     setModeToggle() {
         this.editMode = !this.editMode;
+    }
+
+    setCameraCenterPos(pos) {
+        if (pos && (pos.x !== this.cameraCenterPos.x || pos.y !== this.cameraCenterPos.y)) {
+            this.cameraCenterPos = new THREE.Vector2(pos.x, pos.y);
+        }
     }
 
     updateController(meshes) {

@@ -4,25 +4,16 @@ import { Scale } from './Scale';
 
 export const Option = ({mesh}) => {
 
-    // todo: 위치 고정시키자. (왼쪽에 붙여)
-    // todo: 선택하면 그 속성이 띄워지게 하자.
     const [select, setSelect] = useState(null);
     useEffect(() => {
         setSelect(mesh);
         console.log(mesh);
     }, [mesh])
 
-    const [type, setType] = useState(true);
-
-    function rotateHandler() {
-        setType(true);
-    }
-
-    function scaleHandler() {
-        setType(false);
-    }
-
     function deleteHandler() {
+
+        //todo: object delete 기능 추가
+        mesh.delete();
     }
     
     return (
@@ -37,7 +28,7 @@ export const Option = ({mesh}) => {
                             <Rotate obj={select}></Rotate>
                             <Scale obj={select}></Scale>
                             <div>
-                            <button className='rounded outline outline-offset-2 outline-2 mb-3 w-20' onClick={deleteHandler}>delete</button>
+                            <button className='rounded outline outline-offset-2 outline-2 mb-3 w-20 mt-4' onClick={deleteHandler}>delete</button>
                             </div>
                         </div>
                     </div>

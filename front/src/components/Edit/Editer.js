@@ -23,30 +23,26 @@ const Editer = () => {
     // 입장, 만들기
     const [isLoading, setIsLoading] = useState(false);
     const [selectMesh, setSelectMesh] = useState(null);
+    
 
     window.addEventListener('resize', setSize);
 
     function update() {
-
         control.updateController(objects.objectArray);
-       
         renderer.render(scene, camera);
         renderer.setAnimationLoop(update);
     }
 
     function setSize() {
-
         if (camera && renderer && scene) {
             camera.left = -(window.innerWidth / window.innerHeight);
             camera.right = window.innerWidth / window.innerHeight;
             camera.top = 1;
             camera.bottom = -1;
-        
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.render(scene, camera);
         }
-        
     }
 
     function init() {
@@ -78,24 +74,26 @@ const Editer = () => {
             1000
         );
 
-        const cameraPosition = new THREE.Vector3(3, 5, 2);
-        camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+        floor = new Floor(renderer, group);
+
+        const cameraInitPos = floor.getCenterPos();
+
+        camera.position.set(cameraInitPos.x, 5, cameraInitPos.z);
         camera.rotation.reorder('YXZ');
         camera.rotation.x = THREE.MathUtils.degToRad(-45);
         camera.rotation.y = THREE.MathUtils.degToRad(-45);
+
         camera.zoom = 0.1;
         camera.updateProjectionMatrix();
         scene.add(camera);
         
-        const ambientLight = new THREE.AmbientLight('white', 0.7);
+        const ambientLight = new THREE.AmbientLight('white', 0.8);
         console.log(ambientLight);
         scene.add(ambientLight);
 
-        floor = new Floor(renderer, group);
-
         control = new Controller(camera, renderer.domElement, canvas, group, floor, setSelectMesh);
         
-        objects = new Objects(group, loader);
+        objects = new Objects(group, camera, canvas, floor);
 
         scene.add(group);
         update();

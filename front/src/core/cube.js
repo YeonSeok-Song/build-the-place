@@ -28,6 +28,7 @@ export class Cube {
     }
 
     move(x, z) {
-        this.mesh.position.set(x, z);
+        this.mesh.position.set(x, 0.5, z);
     }
+
 }

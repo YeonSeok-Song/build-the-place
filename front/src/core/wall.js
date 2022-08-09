@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export class Wall {
 
-    constructor() {
+    constructor(x = null, y = null) {
         this.name = `${uuidv4()}`;
         this.mesh = new THREE.Mesh(
             new THREE.PlaneGeometry(1, 1),
@@ -14,6 +14,8 @@ export class Wall {
         )
         this.mesh.name = `wall#${this.name}`;
         this.mesh.position.y = 0.5;
+        this.mesh.position.x = x ? x : 0;
+        this.mesh.position.z = y ? y : 0;
         this.rotatePos = null;
 
         this.setRotatePos();

@@ -5,13 +5,19 @@ export class Floor {
     constructor(renderer, group) {
 
         this.group      = group;
+        this.blockGroup = new THREE.Group();
         this.blocks     = [];
         this.lines      = [];
         this.renderer   = renderer;
         this.x          = 0;
         this.y          = 0;
 
-        this.makeBlock(0, 0);
+        this.makeBlock(0 ,0);
+
+        for (let i = 0; i < 9; i++) {
+            this.sizeUpX();
+            this.sizeUpY();
+        }
     }
 
     makeBlock(x, y) {
@@ -38,8 +44,10 @@ export class Floor {
         this.lines[line.name] = line;
         this.blocks[floorMesh.name] = floorMesh;
 
-        this.group.add(this.blocks[floorMesh.name]);
+        this.blockGroup.add(this.blocks[floorMesh.name]);
         this.group.add(this.lines[line.name]);
+        
+        this.group.add(this.blockGroup);
     }
 
     deleteBlock(x, y) {
@@ -50,7 +58,7 @@ export class Floor {
         this.lines[`${x}-${y}`].geometry.dispose();
         this.lines[`${x}-${y}`].material.dispose();
 
-        this.group.remove(this.blocks[`${x}-${y}`]);
+        this.blockGroup.remove(this.blocks[`${x}-${y}`]);
         this.group.remove(this.lines[`${x}-${y}`]);
 
         this.renderer.renderLists.dispose();
